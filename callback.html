@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>認証コード — SNS自動投稿</title>
+<style>
+  body { font-family:-apple-system,"Segoe UI","Hiragino Sans","Noto Sans JP",sans-serif;
+         background:#0f1020; color:#eef; margin:0; min-height:100vh;
+         display:flex; align-items:center; justify-content:center; }
+  .card { background:#1b1d33; padding:32px 28px; border-radius:14px; max-width:560px; width:92%;
+          box-shadow:0 10px 40px rgba(0,0,0,.4); }
+  h1 { font-size:1.3rem; margin:0 0 8px; }
+  p { color:#aab; line-height:1.7; }
+  .code { font-family:Consolas,monospace; font-size:1.05rem; background:#0c0d1c; color:#7fffd4;
+          padding:14px; border-radius:8px; word-break:break-all; border:1px solid #33365a; }
+  button { margin-top:14px; padding:12px 18px; border:0; border-radius:8px; background:#2f5496;
+           color:#fff; font-size:1rem; cursor:pointer; }
+  button:hover { background:#3a64b0; }
+  .ok { color:#7fffd4; margin-left:10px; }
+  .err { color:#ff8a8a; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>認証コードを取得しました</h1>
+    <p>下のコードを<strong>コピー</strong>して、PCのツール画面(コマンド)に貼り付けてください。</p>
+    <div class="code" id="code">読み込み中...</div>
+    <button onclick="copyCode()">コードをコピー</button>
+    <span class="ok" id="copied"></span>
+    <p id="hint" style="margin-top:20px; font-size:.9rem;"></p>
+  </div>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get("code");
+  const error = params.get("error");
+  const el = document.getElementById("code");
+  if (code) {
+    el.textContent = code;
+  } else if (error) {
+    el.textContent = "エラー: " + error + " / " + (params.get("error_description")||"");
+    el.classList.add("err");
+  } else {
+    el.textContent = "コードが見つかりません。認証をやり直してください。";
+    el.classList.add("err");
+  }
+  function copyCode() {
+    if (!code) return;
+    navigator.clipboard.writeText(code).then(()=>{
+      document.getElementById("copied").textContent = "コピーしました！";
+    });
+  }
+</script>
+</body>
+</html>
